@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 
 import config from './config/config';
 import logging from './config/logging';
-import sampleRoutes from './routes/sample';
+import authorisationRoutes from './routes/authorisation';
 
 const NAMESPACE = 'Server';
 const router = express();
@@ -30,7 +30,7 @@ router.use((request, response, next) => {
   next();
 });
 
-router.use('/sample', sampleRoutes);
+router.use('/authorisation', authorisationRoutes);
 
 router.use((request, response) => {
   const error = new Error('Route not found');

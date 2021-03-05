@@ -4,7 +4,8 @@
   "description": "Authentication service for wizards brew application",
   "main": "src/server.ts",
   "scripts": {
-    "build": "rm -rf build/ --write source/ && npx tsc"
+    "build": "rm -rf build/ --write source/ && npx tsc",
+    "serve:local": "npx nodemon src/server.ts"
   },
   "author": "",
   "license": "ISC",
