@@ -4,7 +4,7 @@ import logging from '../config/logging';
 
 const NAMESPACE = 'Authorisation Controller';
 
-const healthCheck = (request: Request, response: Response, next: NextFunction) => {
+const healthCheck = (request: Request, response: Response): Response => {
   logging.info(NAMESPACE, 'Authorisation health check route called.');
 
   return response.status(200).json({
@@ -12,4 +12,4 @@ const healthCheck = (request: Request, response: Response, next: NextFunction) =
   });
 };
 
-export default { healthCheck };
+export default healthCheck;

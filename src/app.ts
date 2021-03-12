@@ -1,15 +1,14 @@
 import http from 'http';
 import express from 'express';
-import bodyParser from 'body-parser';
 
 import config from './config/config';
 import logging from './config/logging';
 import authorisationRoutes from './routes/authorisation';
 
 const NAMESPACE = 'Server';
-const router = express();
+const server = express();
 
-router.use((request, response, next) => {
+server.use((request, response, next) => {
   logging.info(NAMESPACE, `METHOD - [${request.method}], URL - [${request.url}], IP - [${request.socket.remoteAddress}]`);
 
   response.on('finish', () => {
@@ -19,10 +18,10 @@ router.use((request, response, next) => {
   next();
 });
 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
+server.use(express.urlencoded({ extended: false }));
+server.use(express.json());
 
-router.use((request, response, next) => {
+server.use((request, response, next) => {
   //REMOVE ONCE LIVE, USE PREDEFINED ROUTES
   response.header('Access-Control-Allow-Origin', '*');
   response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -30,15 +29,17 @@ router.use((request, response, next) => {
   next();
 });
 
-router.use('/authorisation', authorisationRoutes);
+server.use('/authorisation', authorisationRoutes);
 
-router.use((request, response) => {
-  const error = new Error('Route not found');
+server.use((request, response) => {
+  const error = new Error('Endpoint does not exist');
 
   return response.status(404).json({
     message: error.message
   });
 });
 
-const httpServer = http.createServer(router);
-httpServer.listen(config.server.port, () => logging.info(NAMESPACE, `Server running on ${config.server.hostname}:${config.server.port}`));
+const app = http.createServer(server);
+app.listen(config.server.port, () => logging.info(NAMESPACE, `Server running on ${config.server.hostname}:${config.server.port}`));
+
+export default app;
