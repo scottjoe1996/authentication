@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 
-import healthCheck from './authorisation';
+import healthCheck from './authentication';
 
 const mockResponse = (): Response => {
   const request = {} as any;

@@ -1,6 +1,6 @@
 import express from 'express';
 
-import healthCheck from '../controllers/authorisation';
+import healthCheck from '../controllers/authentication';
 
 const router = express.Router();
 

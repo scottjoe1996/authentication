@@ -3,7 +3,7 @@ import express from 'express';
 
 import config from './config/config';
 import logging from './config/logging';
-import authorisationRoutes from './routes/authorisation';
+import authorisationRoutes from './routes/authentication';
 
 const NAMESPACE = 'Server';
 const server = express();
@@ -29,7 +29,7 @@ server.use((request, response, next) => {
   next();
 });
 
-server.use('/authorisation', authorisationRoutes);
+server.use('/authentication', authorisationRoutes);
 
 server.use((request, response) => {
   const error = new Error('Endpoint does not exist');
