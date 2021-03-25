@@ -1,23 +1,26 @@
-import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
+import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 import jwt from 'jsonwebtoken';
 import jwkToPem from 'jwk-to-pem';
 import axios from 'axios';
 
 import config from '../config/config';
-import { UserDetails } from '../types';
+import { TokenResult, UserDetails } from '../types';
 
 export class AccessTokenHelper {
-  public async generateToken(userDetails: UserDetails): Promise<string> {
-    const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(userDetails);
-    const cognitoUser = this.getCognitoUser();
+  public async generateToken(userDetails: UserDetails): Promise<TokenResult> {
+    const authenticationDetails = new AuthenticationDetails(userDetails);
+    const cognitoUser = this.getCognitoUser(userDetails.Username);
 
     return new Promise((resolve, reject) => {
       cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: (result) => {
-          resolve(result.getAccessToken().getJwtToken());
+          resolve({ status: 'AUTHENTICATED', token: result.getAccessToken().getJwtToken() });
         },
         onFailure: (error) => {
           reject(error);
+        },
+        newPasswordRequired: () => {
+          resolve({ status: 'NEW_PASSWORD_REQUIRED' });
         }
       });
     });
@@ -29,17 +32,17 @@ export class AccessTokenHelper {
     jwt.verify(token, pem);
   }
 
-  private getCognitoUser(): AmazonCognitoIdentity.CognitoUser {
-    const userPool = new AmazonCognitoIdentity.CognitoUserPool(config.userPoolData);
+  private getCognitoUser(username: string): CognitoUser {
+    const userPool = new CognitoUserPool(config.userPoolData);
     const userData = {
-      Username: 'username',
+      Username: username,
       Pool: userPool
     };
-    return new AmazonCognitoIdentity.CognitoUser(userData);
+    return new CognitoUser(userData);
   }
 
   private async getPem(): Promise<jwt.Secret> {
-    const jwkUrl = `https://cognito-idp.${config.userPoolData.awsRegion}.amazonaws.com/${config.userPoolData.UserPoolId}/.well-known/jwks.jso`;
+    const jwkUrl = `https://cognito-idp.${config.awsRegion}.amazonaws.com/${config.userPoolData.UserPoolId}/.well-known/jwks.jso`;
 
     return axios
       .get(jwkUrl)

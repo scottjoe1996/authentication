@@ -23,13 +23,13 @@ const SERVER = {
 };
 
 const USER_POOL_DATA = {
-  awsRegion: awsRegion,
   ClientId: ClientId,
   UserPoolId: userPoolId
 };
 
 const config = {
   server: SERVER,
+  awsRegion,
   userPoolData: USER_POOL_DATA
 };
 

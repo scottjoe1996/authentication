@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 
-import healthCheck from './authentication';
+import { healthCheck } from './authentication';
 
 const mockResponse = (): Response => {
   const request = {} as any;
@@ -22,7 +22,7 @@ const mockRequest = (): Request => {
   return request;
 };
 
-describe('authorisation controller', () => {
+describe('Authentication controller', () => {
   describe('healthCheck', () => {
     it('should return 200 response with message "pong"', () => {
       const result = healthCheck(mockRequest(), mockResponse());
